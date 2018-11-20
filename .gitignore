@@ -1,5 +1,7 @@
 # Builds
 build
+# Configs
+config
 # Logs
 logs
 *.log
