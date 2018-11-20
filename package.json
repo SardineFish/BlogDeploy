@@ -2,8 +2,9 @@
   "name": "git-ftp-deployment",
   "version": "1.0.0",
   "description": "Deploy website from git to ftp",
-  "main": "index.js",
+  "main": "./build/app.js",
   "scripts": {
+    "start": "node ./build/app.js",
     "build": "npx tsc",
     "build:watch": "npx tsc -w"
   },
