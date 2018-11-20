@@ -1,7 +1,7 @@
 # Builds
 build
 # Configs
-config
+config/config.js
 # Logs
 logs
 *.log
