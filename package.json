@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
-    "build:watch": "npx tsc -w",
+    "build:watch": "npx tsc -w"
   },
   "author": "SardineFish",
   "license": "MIT",
