@@ -7,9 +7,10 @@ const app = new Koa();
 const router = new Router();
 app
     .use(router.routes())
-    .use(router.allowedMethods());
+    .use(router.allowedMethods())
+    .listen(config.server.port, config.server.host);
 
 router.post("/update", (ctx, next) =>
 {
-    
+    console.log(ctx.request);   
 });

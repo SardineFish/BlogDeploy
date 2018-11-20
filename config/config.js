@@ -1,3 +1,15 @@
-"use strict";
-exports.__esModule = true;
-exports["default"] = {};
+exports.default = {
+    server: {
+        host: "localhost",
+        port: 30996
+    },
+    ftp: {
+        address: "",
+        folder: "/"
+    },
+    git: {
+        repository: "",
+        branch: "master",
+        sshKey: ""
+    }
+};
