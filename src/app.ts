@@ -4,6 +4,7 @@ import Router from "koa-router";
 import config from "../config/config";
 import { Push,  } from "github-webhook-event-types";
 import koaBody = require("koa-body");
+import bodyParser from "koa-bodyparser";
 import Git from "nodegit";
 import { GitRepo } from "./git";
 import { FTPClient } from "./ftp";
@@ -12,6 +13,7 @@ import fs from "fs";
 import { promisify } from "util";
 import Path from "path";
 import { ServerLog } from "./log";
+import crypto from "crypto";
 
 const app = new Koa();
 const router = new Router();
@@ -21,18 +23,26 @@ const ftp = new FTPClient(config.ftp.address, config.ftp.username, config.ftp.pa
 router
     .post("/update", (ctx, next) =>
     {
+        
         ctx.response.status = 200;
-        console.log(ctx.request.headers);
+        let sign = ctx.request.headers["x-hub-signature"];
+        let hmac = crypto.createHmac("sha1", config.webhook.secret);
+        ctx.req.pipe(hmac);
+        var body = ctx.req.read(ctx.request.length);
+        
+        hmac.update(body);
+        console.log(hmac.digest().toString("hex"));
+        
     });
 
 setup();
 async function setup()
 {
-    await ftp.connect();
+    /*await ftp.connect();
     await git.open();
-    await deploy();
+    await deploy();*/
     app
-        .use(koaBody())
+        .use(koaBody({json:false}))
         .use(router.routes())
         .use(router.allowedMethods())
         .listen(config.server.port, config.server.host);
