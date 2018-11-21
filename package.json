@@ -24,7 +24,6 @@
     "github-webhook-event-types": "^1.2.1",
     "koa": "^2.6.2",
     "koa-body": "^4.0.4",
-    "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
     "linq": "^3.1.1",
     "nodegit": "^0.23.0"

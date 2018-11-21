@@ -4,7 +4,6 @@ import Router from "koa-router";
 import config from "../config/config";
 import { Push,  } from "github-webhook-event-types";
 import koaBody = require("koa-body");
-import bodyParser from "koa-bodyparser";
 import Git from "nodegit";
 import { GitRepo } from "./git";
 import { FTPClient } from "./ftp";
