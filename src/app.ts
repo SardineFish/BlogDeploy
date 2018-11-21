@@ -48,15 +48,22 @@ router
 setup();
 async function setup()
 {
-    taskQueue.on("error", (error) => serverLog.error(`Task failed: ${error.message}`));
-    await git.open();
-    taskQueue.enqueue(() => deploy());
-    app
-        .use(koaBody({json:false}))
-        .use(router.routes())
-        .use(router.allowedMethods())
-        .listen(config.server.port, config.server.host);
-    serverLog.log(`Server listening on http://${config.server.host}:${config.server.port}`);
+    try
+    {
+        taskQueue.on("error", (error) => serverLog.error(`Task failed: ${error.message}`));
+        await git.open();
+        taskQueue.enqueue(() => deploy());
+        app
+            .use(koaBody({ json: false }))
+            .use(router.routes())
+            .use(router.allowedMethods())
+            .listen(config.server.port, config.server.host);
+        serverLog.log(`Server listening on http://${config.server.host}:${config.server.port}`);
+    }
+    catch (ex)
+    {
+        serverLog.error(`Server setup failed: ${ex.message}`);
+    }
 }
 
 async function deploy()
