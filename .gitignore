@@ -3,6 +3,7 @@ build
 # Configs
 config/config.js
 # Logs
+log.txt
 logs
 *.log
 npm-debug.log*
