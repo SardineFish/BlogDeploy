@@ -35,7 +35,7 @@ router
         var body = ctx.req.read(ctx.request.length);
         hmac.update(body);
         let sign = `sha1=${hmac.digest().toString("hex")}`;
-        if (!sign !== signGithub)
+        if (sign !== signGithub)
         {
             ctx.response.status = 403;
             serverLog.error(`Signature missmatch. Give:${signGithub} Calcu:${sign}`);
