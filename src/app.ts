@@ -11,6 +11,7 @@ import { PromiseSchedule, foreachAsync } from "./lib";
 import fs from "fs";
 import { promisify } from "util";
 import Path from "path";
+import { ServerLog } from "./log";
 
 //const app = new Koa();
 const router = new Router();
@@ -26,9 +27,9 @@ router
     .use(router.routes())
     .use(router.allowedMethods())
     .listen(config.server.port, config.server.host);*/
-
-const git = new GitRepo(config.git.path, config.git.repository, config.git.branch);
-const ftp = new FTPClient(config.ftp.address, config.ftp.username, config.ftp.password);
+const serverLog = new ServerLog(config.server.log);
+const git = new GitRepo(config.git.path, config.git.repository, config.git.branch, serverLog);
+const ftp = new FTPClient(config.ftp.address, config.ftp.username, config.ftp.password, serverLog);
 setup();
 async function testGit()
 {
@@ -50,16 +51,16 @@ async function setup()
         {
             if (await promisify(fs.exists)(Path.resolve(git.path, file)))
             {
-                console.log(`Uploading ${file}`);
+                serverLog.log(`Uploading ${file}`);
                 await ftp.put(Path.resolve(git.path, file), Path.posix.join(config.ftp.folder, file));
             }
             else
-                console.warn(`Ingore ${file}`);
+                serverLog.warn(`Ingore ${file}`);
         }
         catch (ex)
         {
-            console.error(`Upload ${file} failed: ${ex.message}`);
+            serverLog.error(`Upload ${file} failed: ${ex.message}`);
         }
     });
-    
+    serverLog.log("Deplooy completed. ");
 }

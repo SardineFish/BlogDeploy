@@ -2,6 +2,7 @@ interface Config {
     server: {
         host: string;
         port: number;
+        log: string;
     };
     ftp: {
         address: string;

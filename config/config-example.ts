@@ -3,6 +3,7 @@ interface Config
     server: {
         host: string;
         port: number;
+        log: string;
     };
     ftp: {
         address: string;
@@ -19,7 +20,8 @@ interface Config
 export default <Config>{
     server: {
         host: "localhost",
-        port:30996
+        port: 30996,
+        log: "./log.txt"
     },
     git: {
         path: "/path/to/repo",

@@ -2,7 +2,9 @@ import ftp from "ftp";
 import URL from "url";
 import { promisify } from "util";
 import Path from "path";
+import { ServerLog } from "./log";
 
+let console: ServerLog;
 
 export class FTPClient
 {
@@ -10,11 +12,12 @@ export class FTPClient
     username: string;
     password: string;
     client: ftp;
-    constructor(address: string, username: string, password: string)
+    constructor(address: string, username: string, password: string, log:ServerLog)
     {
         this.address = address;
         this.username = username;
         this.password = password;
+        console = log;
     }
 
     async connect()

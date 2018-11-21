@@ -1,7 +1,10 @@
 import Git from "nodegit";
 import Path from "path";
-import linq from "linq";
+import linq from "linq";41
 import { mapAsync } from "./lib";
+import { ServerLog } from "./log";
+
+let console: ServerLog;
 
 export class GitRepo
 {
@@ -9,11 +12,12 @@ export class GitRepo
     url: string;
     branch: string;
     repo: Git.Repository;
-    constructor(path: string, url:string, branch: string)
+    constructor(path: string, url:string, branch: string, log:ServerLog)
     {
         this.path = Path.resolve(path);
         this.url = url;
         this.branch = branch;
+        console = log;
     }
 
     async open()
