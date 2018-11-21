@@ -38,7 +38,7 @@ router
         if (!sign !== signGithub)
         {
             ctx.response.status = 403;
-            serverLog.error("Signature missmatch. ");
+            serverLog.error(`Signature missmatch. Give:${signGithub} Calcu:${sign}`);
             return;
         }
         taskQueue.enqueue(() => deploy());
