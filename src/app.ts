@@ -26,11 +26,12 @@ router
         ctx.response.status = 200;
         let sign = ctx.request.headers["x-hub-signature"];
         let hmac = crypto.createHmac("sha1", config.webhook.secret);
-        ctx.req.pipe(hmac);
+        //ctx.req.pipe(hmac);
         var body = ctx.req.read(ctx.request.length);
         
         hmac.update(body);
         console.log(hmac.digest().toString("hex"));
+        console.log(body.toString());
         
     });
 
