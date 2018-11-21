@@ -1,5 +1,8 @@
 POST http://localhost:30996/update
 Content-Type: application/json
+User-Agent: GitHub-Hookshot/0c1bc40
+X-GitHub-Delivery: 8b14564e-ed39-11e8-98b7-6fa18e4b37ee
+X-GitHub-Event: push
 
 {
   "zen": "Anything added dilutes everything else.",

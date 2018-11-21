@@ -4,6 +4,11 @@ interface Config {
         port: number;
         log: string;
     };
+    webhook: {
+        url: string;
+        secret: string;
+        method: "GET" | "POST";
+    };
     ftp: {
         address: string;
         username: string;

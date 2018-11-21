@@ -1,5 +1,6 @@
 import { EventEmitter } from "events";
 import fs from "fs";
+import crypto from "crypto";
 const LogEvent = "log";
 export class ServerLog
 {

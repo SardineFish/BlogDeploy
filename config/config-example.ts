@@ -5,6 +5,11 @@ interface Config
         port: number;
         log: string;
     };
+    webhook: {
+        url: string,
+        secret: string,
+        method: "GET" | "POST";
+    }
     ftp: {
         address: string;
         username: string;
@@ -22,6 +27,11 @@ export default <Config>{
         host: "localhost",
         port: 30996,
         log: "./log.txt"
+    },
+    webhook: {
+        secret: "",
+        url: "/webhook",
+        method: "POST",
     },
     git: {
         path: "/path/to/repo",

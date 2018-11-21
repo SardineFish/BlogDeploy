@@ -13,37 +13,33 @@ import { promisify } from "util";
 import Path from "path";
 import { ServerLog } from "./log";
 
-//const app = new Koa();
+const app = new Koa();
 const router = new Router();
+const serverLog = new ServerLog(config.server.log);
+const git = new GitRepo(config.git.path, config.git.repository, config.git.branch, serverLog);
+const ftp = new FTPClient(config.ftp.address, config.ftp.username, config.ftp.password, serverLog);
 router
     .post("/update", (ctx, next) =>
     {
         ctx.response.status = 200;
-        
+        console.log(ctx.request.headers);
     });
 
-/*app
-    .use(koaBody())
-    .use(router.routes())
-    .use(router.allowedMethods())
-    .listen(config.server.port, config.server.host);*/
-const serverLog = new ServerLog(config.server.log);
-const git = new GitRepo(config.git.path, config.git.repository, config.git.branch, serverLog);
-const ftp = new FTPClient(config.ftp.address, config.ftp.username, config.ftp.password, serverLog);
 setup();
-async function testGit()
-{
-    await ftp.connect();
-    console.log(await ftp.list("/"));
-    await git.open();
-    await git.pull();
-    //git.diff(await git.repo.getHeadCommit(), await (await git.repo.getHeadCommit()).parent(0));
-}
 async function setup()
 {
     await ftp.connect();
     await git.open();
-    //await new PromiseSchedule(ftp.connect(), git.open());
+    await deploy();
+    app
+        .use(koaBody())
+        .use(router.routes())
+        .use(router.allowedMethods())
+        .listen(config.server.port, config.server.host);
+}
+
+async function deploy()
+{
     let files = await git.pull();
     await foreachAsync(files, async (file) =>
     {

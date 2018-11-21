@@ -1,0 +1,10 @@
+[2018-11-21 19:34:13] [Log] Repository opened at F:\Project\other\blog-repo
+[2018-11-21 19:34:13] [Log] Fetching all from https://github.com/SardineFish/Sardine-Blog.git
+[2018-11-21 19:34:15] [Log] Merging origin/master to master
+[2018-11-21 19:34:15] [Log] Merged.
+[2018-11-21 19:34:15] [Log] Deplooy completed. 
+[2018-11-21 19:40:18] [Log] Repository opened at F:\Project\other\blog-repo
+[2018-11-21 19:40:18] [Log] Fetching all from https://github.com/SardineFish/Sardine-Blog.git
+[2018-11-21 19:40:20] [Log] Merging origin/master to master
+[2018-11-21 19:40:20] [Log] Merged.
+[2018-11-21 19:40:20] [Log] Deplooy completed. 
