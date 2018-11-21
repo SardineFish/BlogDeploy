@@ -1,4 +1,4 @@
-import Git from "nodegit";
+import Git, { Commit } from "nodegit";
 import Path from "path";
 import linq from "linq";41
 import { mapAsync } from "./lib";
@@ -51,13 +51,14 @@ export class GitRepo
             await this.repo.mergeBranches(this.branch, `origin/${this.branch}`);
             console.log(`Merged.`);
             let newCommit = await this.repo.getHeadCommit();
-            return await this.getChangedFiles(await this.diff(newCommit, oldCommit));
+            return newCommit.id().tostrS();
+            //return await this.getChangedFiles(await this.diff(newCommit, oldCommit));
         }
         catch (ex)
         {
             console.error(`Pull failed: ${ex.message}`);
         }
-        return [];
+        return "";
     }
 
     async isParentOf(parent: Git.Commit, child: Git.Commit): Promise<boolean>
@@ -67,19 +68,18 @@ export class GitRepo
         return this.isParentOf(parent, await child.parent(0));
     }
     
-    async diff(newCommit: Git.Commit, oldCommit: Git.Commit)
+    async diff(newCommit: Git.Commit, oldCommit: Git.Commit = null)
     {
-        var oid = oldCommit.id().tostrS();
-        if (!await this.isParentOf(oldCommit,newCommit))
+        if (oldCommit && !await this.isParentOf(oldCommit,newCommit))
             throw new Error(`Diff error. Commit ${oldCommit.id()} is not parent of Commit ${newCommit.id()}`);
-        
+
+        const shouldContinue = (commit: Git.Commit) => oldCommit ? commit.id().cmp(oldCommit.id()) != 0 : commit.parentcount() > 0;
+
         let diffs: Git.Diff[] = [];
-        let commit = await newCommit.parent(0);//await this.repo.getCommit(newCommit.parentId(0));
-        var x = 0;
-        for (let commit = newCommit; commit.id().cmp(oldCommit.id()) != 0; commit = await this.repo.getCommit(commit.parentId(0)))
+        
+        for (let commit = newCommit; shouldContinue(commit); commit = await this.repo.getCommit(commit.parentId(0)))
         {
             diffs = diffs.concat(await commit.getDiff());
-
         }
         return diffs;
     }

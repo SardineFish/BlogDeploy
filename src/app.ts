@@ -13,13 +13,13 @@ import { promisify } from "util";
 import Path from "path";
 import { ServerLog } from "./log";
 import crypto from "crypto";
+import { ProjectDeploy } from "./deploy";
 
 const app = new Koa();
 const router = new Router();
 const serverLog = new ServerLog(config.server.log);
-const git = new GitRepo(config.git.path, config.git.repository, config.git.branch, serverLog);
-const ftp = new FTPClient(config.ftp.address, config.ftp.username, config.ftp.password, serverLog);
-const taskQueue = new TaskQueue(config.server.queueSize);
+const deploy = new ProjectDeploy(serverLog);
+
 router
     .post("/update", (ctx, next) =>
     {
@@ -41,7 +41,7 @@ router
             serverLog.error(`Signature missmatch. Give:${signGithub} Calcu:${sign}`);
             return;
         }
-        taskQueue.enqueue(() => deploy());
+        deploy.requestDeploy();
         serverLog.log(`Task added to queue. `);
     });
 
@@ -50,10 +50,7 @@ async function setup()
 {
     try
     {
-        taskQueue.on("error", (error) => serverLog.error(`Task failed: ${error.message}`));
-        await git.open();
-        await ftp.connect();
-        taskQueue.enqueue(() => deploy());
+        await deploy.setup();
         app
             .use(koaBody({ json: false }))
             .use(router.routes())
@@ -65,27 +62,4 @@ async function setup()
     {
         serverLog.error(`Server setup failed: ${ex.message}`);
     }
-}
-
-async function deploy()
-{
-    let files = await git.pull();
-    await foreachAsync(files, async (file) =>
-    {
-        try
-        {
-            if (await promisify(fs.exists)(Path.resolve(git.path, file)))
-            {
-                serverLog.log(`Uploading ${file}`);
-                await ftp.put(Path.resolve(git.path, file), Path.posix.join(config.ftp.folder, file));
-            }
-            else
-                serverLog.warn(`Ingore ${file}`);
-        }
-        catch (ex)
-        {
-            serverLog.error(`Upload ${file} failed: ${ex.message}`);
-        }
-    });
-    serverLog.log("Deploy completed. ");
 }

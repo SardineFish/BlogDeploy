@@ -36,7 +36,13 @@ export class FTPClient
                 user: this.username,
                 password: this.password
             });
+            console.log(`FTP connected to ${this.address}`);
         });
+    }
+
+    close()
+    {
+        this.client.end();
     }
 
     async list(path:string)
