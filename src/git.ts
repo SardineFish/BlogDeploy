@@ -12,6 +12,7 @@ export class GitRepo
     url: string;
     branch: string;
     repo: Git.Repository;
+
     constructor(path: string, url:string, branch: string, log:ServerLog)
     {
         this.path = Path.resolve(path);

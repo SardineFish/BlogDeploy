@@ -4,7 +4,8 @@ exports.default = {
     server: {
         host: "localhost",
         port: 30996,
-        log: "./log.txt"
+        log: "./log.txt",
+        queueSize: 10
     },
     webhook: {
         secret: "",

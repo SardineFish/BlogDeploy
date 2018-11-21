@@ -4,6 +4,7 @@ interface Config
         host: string;
         port: number;
         log: string;
+        queueSize: number;
     };
     webhook: {
         url: string,
@@ -26,7 +27,8 @@ export default <Config>{
     server: {
         host: "localhost",
         port: 30996,
-        log: "./log.txt"
+        log: "./log.txt",
+        queueSize: 10
     },
     webhook: {
         secret: "",

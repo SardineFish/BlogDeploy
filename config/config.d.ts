@@ -3,6 +3,7 @@ interface Config {
         host: string;
         port: number;
         log: string;
+        queueSize: number;
     };
     webhook: {
         url: string;

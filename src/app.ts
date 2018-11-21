@@ -7,7 +7,7 @@ import koaBody = require("koa-body");
 import Git from "nodegit";
 import { GitRepo } from "./git";
 import { FTPClient } from "./ftp";
-import { PromiseSchedule, foreachAsync } from "./lib";
+import { PromiseSchedule, foreachAsync, TaskQueue } from "./lib";
 import fs from "fs";
 import { promisify } from "util";
 import Path from "path";
@@ -19,33 +19,44 @@ const router = new Router();
 const serverLog = new ServerLog(config.server.log);
 const git = new GitRepo(config.git.path, config.git.repository, config.git.branch, serverLog);
 const ftp = new FTPClient(config.ftp.address, config.ftp.username, config.ftp.password, serverLog);
+const taskQueue = new TaskQueue(config.server.queueSize);
 router
     .post("/update", (ctx, next) =>
     {
-        
-        ctx.response.status = 200;
-        let sign = ctx.request.headers["x-hub-signature"];
+        serverLog.log(`Request from ${ctx.request.ip}`);
+        let signGithub = ctx.request.headers["x-hub-signature"];
+        if (!signGithub)
+        {
+            ctx.response.status = 403;    
+            serverLog.error("Request without signature. ");
+            return;
+        }
         let hmac = crypto.createHmac("sha1", config.webhook.secret);
-        //ctx.req.pipe(hmac);
         var body = ctx.req.read(ctx.request.length);
-        
         hmac.update(body);
-        console.log(hmac.digest().toString("hex"));
-        console.log(body.toString());
-        
+        let sign = `sha1=${hmac.digest().toString("hex")}`;
+        if (!sign !== signGithub)
+        {
+            ctx.response.status = 403;
+            serverLog.error("Signature missmatch. ");
+            return;
+        }
+        taskQueue.enqueue(() => deploy());
+        serverLog.log(`Task added to queue. `);
     });
 
 setup();
 async function setup()
 {
-    /*await ftp.connect();
+    taskQueue.on("error", (error) => serverLog.error(`Task failed: ${error.message}`));
     await git.open();
-    await deploy();*/
+    taskQueue.enqueue(() => deploy());
     app
         .use(koaBody({json:false}))
         .use(router.routes())
         .use(router.allowedMethods())
         .listen(config.server.port, config.server.host);
+    serverLog.log(`Server listening on http://${config.server.host}:${config.server.port}`);
 }
 
 async function deploy()
@@ -68,5 +79,5 @@ async function deploy()
             serverLog.error(`Upload ${file} failed: ${ex.message}`);
         }
     });
-    serverLog.log("Deplooy completed. ");
+    serverLog.log("Deploy completed. ");
 }
