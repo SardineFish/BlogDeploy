@@ -52,6 +52,7 @@ async function setup()
     {
         taskQueue.on("error", (error) => serverLog.error(`Task failed: ${error.message}`));
         await git.open();
+        await ftp.connect();
         taskQueue.enqueue(() => deploy());
         app
             .use(koaBody({ json: false }))
