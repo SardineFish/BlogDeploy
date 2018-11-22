@@ -42,6 +42,7 @@ router
             return;
         }
         deploy.requestDeploy();
+        ctx.response.status = 200;
         serverLog.log(`Task added to queue. `);
     });
 
