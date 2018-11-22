@@ -64,7 +64,7 @@ export class ProjectDeploy
         {
             try
             {
-                if ((await promisify(fs.stat)(file)).isDirectory())
+                if ((await promisify(fs.stat)(Path.resolve(this.git.path, file))).isDirectory())
                 {
                     console.log(`Making directory "${file}"`);
                     await this.ftp.mkdir(Path.posix.join(config.ftp.folder, file));
