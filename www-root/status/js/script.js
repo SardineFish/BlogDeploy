@@ -13,22 +13,6 @@ const statusMap = {
         text: "Error"
     }
 };
-/**
- * 
- * @param {HTMLElement} element 
- * @param {*} className 
- */
-function removeClass(element, className)
-{
-    element.className
-        .split(" ")
-        .filter(name => name != className)
-        .join(" ");
-}
-function addClass(element, className)
-{
-    element.className = [element.className].concat([className]).join(" ");
-}
 function update()
 {
     fetch("/status", {
@@ -39,8 +23,8 @@ function update()
             let element = statusMap[data.status].element;
             let text = statusMap[data.status].text;
             let deployTime = new Date(data.lastDeployTime || 0);
-            document.querySelectorAll(".status-icon").forEach(element => removeClass(element, "show"));
-            addClass(element, "show");
+            document.querySelectorAll(".status-icon").forEach(element => element.classList.remove("show"));
+            element.classList.add("show");
             document.querySelector("#status-text").innerText = text;
             if (data.lastDeployTime) {
                 document.querySelector("#deploy-prefix").innerText = "Last deployed at ";
@@ -49,7 +33,7 @@ function update()
                 document.querySelector("#deploy-prefix").innerText = "Initial deployment failed."
                 document.querySelector("#deploy-time").innerText = "";
             }
-            setTimeout(update, 3000);
+            setTimeout(update, 5000);
         });
 }
 update();
