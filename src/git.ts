@@ -1,4 +1,4 @@
-import Git, { Commit } from "nodegit";
+import Git, { Commit, Oid } from "nodegit";
 import Path from "path";
 import linq from "linq";41
 import { mapAsync } from "./lib";
@@ -75,6 +75,7 @@ export class GitRepo
         if (newCommit && oldCommit && newCommit.id().cmp(oldCommit.id()) == 0)
             return [];
 
+        
         const shouldContinue = (commit: Git.Commit) => oldCommit ? commit.id().cmp(oldCommit.id()) != 0 : commit.parentcount() > 0;
 
         let diffs: Git.Diff[] = [];
@@ -88,6 +89,16 @@ export class GitRepo
         }
         while (shouldContinue(commit));
         return diffs;
+    }
+
+    async getCommit(commit: Oid | string)
+    {
+        try
+        {
+            return await this.repo.getCommit(commit);
+        }
+        catch{ }
+        return null;
     }
 
     async getChangedFiles(diffs: Git.Diff[])
