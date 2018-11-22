@@ -76,11 +76,15 @@ export class GitRepo
         const shouldContinue = (commit: Git.Commit) => oldCommit ? commit.id().cmp(oldCommit.id()) != 0 : commit.parentcount() > 0;
 
         let diffs: Git.Diff[] = [];
-        
-        for (let commit = newCommit; shouldContinue(commit); commit = await this.repo.getCommit(commit.parentId(0)))
+        let commit = newCommit;
+        do
         {
             diffs = diffs.concat(await commit.getDiff());
+            if (commit.parentcount() > 0)
+                commit = await this.repo.getCommit(commit.parentId(0));
+            else break;
         }
+        while (shouldContinue(commit));
         return diffs;
     }
 
