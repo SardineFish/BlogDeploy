@@ -14,6 +14,7 @@ import Path from "path";
 import { ServerLog } from "./log";
 import crypto from "crypto";
 import { ProjectDeploy } from "./deploy";
+import serve from "koa-static";
 
 const app = new Koa();
 const router = new Router();
@@ -27,7 +28,7 @@ router
         let signGithub = ctx.request.headers["x-hub-signature"];
         if (!signGithub)
         {
-            ctx.response.status = 403;    
+            ctx.response.status = 403;
             serverLog.error("Request without signature. ");
             return;
         }
@@ -46,6 +47,25 @@ router
         serverLog.log(`Task added to queue. `);
     });
 
+router
+    .post("/status", (ctx) =>
+    {
+        ctx.response.body = {
+            status: deploy.status,
+            lastDeployTime: deploy.info.lastDeployTime
+        };
+    })
+    .get("/status", async (ctx, next) =>
+    {
+        ctx.url = "/status/status.html";
+        await next();
+        //ctx.response.body = await (promisify(fs.readFile)("./www-root/status/status.html"));
+    })
+    .get("/status/:url*", async (ctx, next) =>
+    {
+        await next();
+    })
+
 setup();
 async function setup()
 {
@@ -56,6 +76,7 @@ async function setup()
             .use(koaBody({ json: false }))
             .use(router.routes())
             .use(router.allowedMethods())
+            .use(serve("./www-root/"))
             .listen(config.server.port, config.server.host);
         serverLog.log(`Server listening on http://${config.server.host}:${config.server.port}`);
     }

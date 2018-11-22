@@ -18,12 +18,14 @@
     "@types/ftp": "^0.3.29",
     "@types/koa": "^2.0.46",
     "@types/koa-router": "^7.0.35",
+    "@types/koa-static": "^4.0.0",
     "@types/nodegit": "^0.22.5",
     "ftp": "^0.3.10",
     "github-webhook-event-types": "^1.2.1",
     "koa": "^2.6.2",
     "koa-body": "^4.0.4",
     "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
     "linq": "^3.1.1",
     "nodegit": "^0.23.0"
   }
