@@ -22,6 +22,7 @@ export class ProjectDeploy
         this.git = new GitRepo(config.git.path, config.git.repository, config.git.branch, serverLog);
         this.ftp = new FTPClient(config.ftp.address, config.ftp.username, config.ftp.password, serverLog);
         this.taskQueue = new TaskQueue(config.server.queueSize);
+        this.loadStatus();
     }
     loadStatus()
     {
