@@ -13,9 +13,17 @@ const statusMap = {
         text: "Error"
     }
 };
+/**
+ * 
+ * @param {HTMLElement} element 
+ * @param {*} className 
+ */
 function removeClass(element, className)
 {
-    element.className = element.className.replace(className, "");
+    element.className
+        .split(" ")
+        .filter(name => name != className)
+        .join(" ");
 }
 function addClass(element, className)
 {
