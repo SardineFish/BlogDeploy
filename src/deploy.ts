@@ -53,12 +53,17 @@ export class ProjectDeploy
     }
     async deploy()
     {
+        console.log(`Start deployment.`);
         let id = await this.git.pull();
+        console.log(`Update from ${this.status.lastDeployedCommit} to ${id}`);
         let commit = await this.git.repo.getCommit(id);
 
         let lastCommit = this.status.lastDeployedCommit != "" ? await this.git.repo.getCommit(this.status.lastDeployedCommit) : null;
         let files = await this.git.getChangedFiles(await this.git.diff(commit, await lastCommit));
-    
+        console.log(`${files.length} files changed. `);
+        let successCount = 0;
+        let failedCount = 0;
+        let ignoreCount = 0;
         await this.ftp.connect();
         await foreachAsync(files, async (file) =>
         {
@@ -68,25 +73,31 @@ export class ProjectDeploy
                 {
                     console.log(`Making directory "${file}"`);
                     await this.ftp.mkdir(Path.posix.join(config.ftp.folder, file));
+                    successCount++;
                     return;
                 }
                 if (await promisify(fs.exists)(Path.resolve(this.git.path, file)))
                 {
                     console.log(`Uploading "${file}"`);
                     await this.ftp.put(Path.resolve(this.git.path, file), Path.posix.join(config.ftp.folder, file));
+                    successCount++;
                 }
                 else
+                {
+                    ignoreCount++;
                     console.warn(`Ingore "${file}"`);
+                }
             }
             catch (ex)
             {
+                failedCount++;
                 console.error(`Upload "${file}" failed: ${ex.message}`);
             }
         });
         this.ftp.close();
         this.status.lastDeployedCommit = id;
         await this.saveStatus();
-        console.log("Deploy completed. ");
+        console.log(`Deploy completed with ${successCount} uploaded, ${ignoreCount} ignored, ${failedCount} failed. `);
     }
 }
 
