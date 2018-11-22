@@ -66,15 +66,15 @@ export class ProjectDeploy
             {
                 if (await promisify(fs.exists)(Path.resolve(this.git.path, file)))
                 {
-                    console.log(`Uploading ${file}`);
+                    console.log(`Uploading [${file}]`);
                     await this.ftp.put(Path.resolve(this.git.path, file), Path.posix.join(config.ftp.folder, file));
                 }
                 else
-                    console.warn(`Ingore ${file}`);
+                    console.warn(`Ingore [${file}]`);
             }
             catch (ex)
             {
-                console.error(`Upload ${file} failed: ${ex.message}`);
+                console.error(`Upload [${file}] failed: ${ex.message}`);
             }
         });
         this.ftp.close();
@@ -83,7 +83,6 @@ export class ProjectDeploy
         console.log("Deploy completed. ");
     }
 }
-
 
 interface DeployStatus
 {
