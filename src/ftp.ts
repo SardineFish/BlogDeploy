@@ -58,7 +58,21 @@ export class FTPClient
             });
         });
     }
-
+    async mkdir(remotePath: string)
+    {
+        return new Promise((resolve, reject) =>
+        {
+            this.client.mkdir(remotePath, true, (error) =>
+            {
+                if (error)
+                {
+                    reject(error);
+                    return;
+                }
+                resolve();
+            });
+        });
+    }
     async put(localPath: string, remotePath: string)
     {
         return new Promise<void>((resolve, reject) =>
@@ -68,7 +82,9 @@ export class FTPClient
                 this.client.put(localPath, remotePath, (error) =>
                 {
                     if (error)
-                        reject(error);
+                    {
+                        reject(error);   
+                    }
                     else
                         resolve();
                 });
