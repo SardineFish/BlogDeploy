@@ -57,6 +57,7 @@ export class ProjectDeploy
         console.log(`Start deployment.`);
         let id = await this.git.pull();
         console.log(`Update from ${this.status.lastDeployedCommit} to ${id}`);
+        
         let commit = await this.git.repo.getCommit(id);
 
         let lastCommit = this.status.lastDeployedCommit != "" ? await this.git.repo.getCommit(this.status.lastDeployedCommit) : null;

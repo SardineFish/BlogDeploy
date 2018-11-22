@@ -72,6 +72,8 @@ export class GitRepo
     {
         if (oldCommit && !await this.isParentOf(oldCommit,newCommit))
             throw new Error(`Diff error. Commit ${oldCommit.id()} is not parent of Commit ${newCommit.id()}`);
+        if (newCommit && oldCommit && newCommit.id().cmp(oldCommit.id()) == 0)
+            return [];
 
         const shouldContinue = (commit: Git.Commit) => oldCommit ? commit.id().cmp(oldCommit.id()) != 0 : commit.parentcount() > 0;
 
