@@ -58,8 +58,8 @@ export class ProjectDeploy
         let id = await this.git.pull();
         console.log(`Update from ${this.status.lastDeployedCommit} to ${id}`);
 
-        let commit = await this.git.repo.getCommit(id);
-        let lastCommit = this.git.getCommit(this.status.lastDeployedCommit);
+        let commit = await this.git.getCommit(id);
+        let lastCommit = await this.git.getCommit(this.status.lastDeployedCommit);
 
         let files = await this.git.getChangedFiles(await this.git.diff(commit, await lastCommit));
         console.log(`${files.length} files changed. `);

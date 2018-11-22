@@ -97,7 +97,10 @@ export class GitRepo
         {
             return await this.repo.getCommit(commit);
         }
-        catch{ }
+        catch (ex)
+        {
+            
+        }
         return null;
     }
 
